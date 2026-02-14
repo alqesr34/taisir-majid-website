@@ -1,6 +1,0 @@
-[build]
-builder = "dockerfile"
-
-[deploy]
-healthchecks = { enabled = true }
-startCommand = "gunicorn wsgi:app"
