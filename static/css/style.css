@@ -1,0 +1,11 @@
+body { font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
+header { direction: rtl; }
+.lead { text-align: right; }
+img { max-width: 220px; }
+.card-title { text-align: right; }
+ul { padding-inline-start: 1rem; }
+
+/* Simple responsive tweaks */
+@media (max-width: 767px) {
+  img { max-width: 160px; }
+}

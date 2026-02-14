@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم | الرسائل والشكاوى</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .admin-header {
+            background: white;
+            padding: 20px 0;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 40px;
+        }
+
+        .admin-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .container-fluid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.1);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .stat-info h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .stat-info p {
+            color: var(--text-light);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+        }
+
+        th,
+        td {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background: #f8fafc;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .badge-complaint {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .badge-suggestion {
+            background: #dbeafe;
+            color: #3b82f6;
+        }
+
+        .badge-inquiry {
+            background: #f3f4f6;
+            color: #64748b;
+        }
+
+        .badge-request {
+            background: #dcfce7;
+            color: #22c55e;
+        }
+
+        .empty-state {
+            padding: 50px;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        /* Force dark text for Admin Forms */
+        .form-group label {
+            color: #000 !important;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-control {
+            color: #000 !important;
+            background-color: #fff !important;
+            border-color: #cbd5e1 !important;
+        }
+
+        /* Admin Action Buttons */
+        .btn-icon {
+            background: #f1f5f9;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 5px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            color: #64748b;
+        }
+
+        .btn-icon:hover {
+            background: #e2e8f0;
+            color: var(--primary-color);
+        }
+
+        .btn-icon.delete:hover {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .btn-icon.pin.active {
+            color: var(--accent-color);
+            background: #fffbeb;
+        }
+
+        /* Modal for Admin */
+        .admin-modal {
+            display: none;
+            position: fixed;
+            z-index: 3000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .admin-modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+        }
+    </style>
+</head>
+
+<body style="background-color: #f1f5f9;">
+
+    <header class="admin-header">
+        <div class="container-fluid">
+            <div class="admin-logo">
+                <i class="fas fa-shield-alt"></i> لوحة الإدارة
+            </div>
+            <div class="user-menu">
+                <span style="margin-left: 15px;">مرحباً، المسؤول</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline"
+                    style="color: var(--primary-color); border-color: var(--primary-color);">تسجيل خروج</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+                <div class="stat-info">
+                    <h3>{{ messages|length }}</h3>
+                    <p>إجمالي الرسائل</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-newspaper"></i></div>
+                <div class="stat-info">
+                    <h3>{{ activities|length }}</h3>
+                    <p>إجمالي الأخبار</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab(event, 'messages-tab')">الرسائل الواردة</button>
+            <button class="tab-btn" onclick="openTab(event, 'activities-tab')">إدارة النشاطات</button>
+        </div>
+
+        <!-- Messages Tab -->
+        <div id="messages-tab" class="tab-content active">
+            <div class="table-container">
+                {% if messages %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>رقم الهاتف</th>
+                            <th>النوع</th>
+                            <th>الرسالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for msg in messages|reverse %}
+                        <tr>
+                            <td>{{ loop.index }}</td>
+                            <td>{{ msg.name }}</td>
+                            <td>{{ msg.phone }}</td>
+                            <td>
+                                <span class="badge badge-{{ msg.type }}">
+                                    {% if msg.type == 'complaint' %} شكوى
+                                    {% elif msg.type == 'suggestion' %} مقترح
+                                    {% elif msg.type == 'inquiry' %} استفسار
+                                    {% elif msg.type == 'request' %} طلب مقابلة
+                                    {% else %} {{ msg.type }}
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td style="max-width: 400px;">{{ msg.message }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.5;"></i>
+                    <p>لا توجد رسائل للعرض حالياً</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Activities Tab -->
+        <div id="activities-tab" class="tab-content">
+            <div class="activity-form-container"
+                style="background: white; padding: 30px; border-radius: 10px; margin-bottom: 30px; box-shadow: var(--shadow-sm);">
+                <h3 style="margin-bottom: 20px; color: var(--primary-color);">إضافة خبر جديد</h3>
+                <form id="addActivityForm" enctype="multipart/form-data">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label>عنوان الخبر</label>
+                            <input type="text" name="title" required class="form-control"
+                                style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px;">
+                        </div>
+                        <div class="form-group">
+                            <label>تاريخ الخبر</label>
+                            <input type="date" name="date" required class="form-control"
+                                style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px;">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>صورة الخبر (اختياري)</label>
+                        <input type="file" name="image" accept="image/*" class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px;">
+                    </div>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label>تفاصيل الخبر</label>
+                        <textarea name="text" rows="4" required class="form-control"
+                            style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px;"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 20px;">نشر الخبر</button>
+                </form>
+            </div>
+
+            <div class="table-container">
+                <h3 style="padding: 20px; border-bottom: 1px solid #eee;">النشاطات الحالية</h3>
+                {% if activities %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الصورة</th>
+                            <th>العنوان</th>
+                            <th>التاريخ</th>
+                            <th>إجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for activity in activities|reverse %}
+                        <tr>
+                            <td>
+                                {% if activity.image %}
+                                <img src="{{ url_for('static', filename=activity.image) }}"
+                                    style="width: 60px; height: 40px; object-fit: cover; border-radius: 5px;">
+                                {% else %}
+                                <span style="font-size: 0.8rem; color: #999;">لا توجد</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ activity.title }}</td>
+                            <td>{{ activity.date }}</td>
+                            <td>
+                            <td>
+                                <div style="display: flex; gap: 5px;">
+                                    <button class="btn-icon pin {{ 'active' if activity.pinned else '' }}"
+                                        onclick="togglePin('{{ activity.id }}')"
+                                        title="{{ 'إلغاء التثبيت' if activity.pinned else 'تثبيت' }}">
+                                        <i class="fas fa-thumbtack"></i>
+                                    </button>
+
+                                    <button class="btn-icon" onclick="openEditModal(this)" data-id="{{ activity.id }}"
+                                        data-title="{{ activity.title }}" data-date="{{ activity.date }}"
+                                        data-text="{{ activity.text }}" title="تعديل">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+
+                                    <button onclick="deleteActivity('{{ activity.id }}')" class="btn-icon delete"
+                                        title="حذف">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="empty-state">
+                    <p>لا توجد نشاطات مضافة بعد</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Edit Activity Modal -->
+    <div id="editActivityModal" class="admin-modal">
+        <div class="admin-modal-content">
+            <h3 style="margin-bottom: 20px; color: var(--primary-color);">تعديل الخبر</h3>
+            <form id="editActivityForm" enctype="multipart/form-data">
+                <input type="hidden" id="edit_id" name="id">
+                <div class="form-group">
+                    <label>عنوان الخبر</label>
+                    <input type="text" id="edit_title" name="title" required class="form-control"
+                        style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px;">
+                </div>
+                <div class="form-group">
+                    <label>تاريخ الخبر</label>
+                    <input type="date" id="edit_date" name="date" required class="form-control"
+                        style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px;">
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>تغيير الصورة (اتركها فارغة للإبقاء على الحالية)</label>
+                    <input type="file" name="image" accept="image/*" class="form-control"
+                        style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px;">
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>تفاصيل الخبر</label>
+                    <textarea id="edit_text" name="text" rows="6" required class="form-control"
+                        style="width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px;"></textarea>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
+                    <button type="button" onclick="closeEditModal()" class="btn btn-outline"
+                        style="color: #64748b; border-color: #cbd5e1;">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ التغييرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+
+        document.getElementById('addActivityForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = 'جاري النشر...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/admin/add_activity', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    alert('تم إضافة الخبر بنجاح');
+                    location.reload();
+                } else {
+                    alert('خطأ: ' + result.message);
+                }
+            } catch (err) {
+                alert('حدث خطأ غير متوقع');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        async function deleteActivity(id) {
+            if (confirm('هل أنت متأكد من حذف هذا الخبر؟')) {
+                try {
+                    const response = await fetch('/admin/delete_activity/' + id, { method: 'POST' });
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        location.reload();
+                    } else {
+                        alert('خطأ في الحذف');
+                    }
+                } catch (err) {
+                    alert('حدث خطأ في الاتصال');
+                }
+            }
+        }
+
+        // Pin Functionality
+        async function togglePin(id) {
+            try {
+                const response = await fetch('/admin/pin_activity/' + id, { method: 'POST' });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    location.reload();
+                } else {
+                    alert('حدث خطأ: ' + result.message);
+                }
+            } catch (err) {
+                alert('فشل الاتصال بالخادم');
+            }
+        }
+
+        // Edit Modal Functions
+        const editModal = document.getElementById('editActivityModal');
+        const editForm = document.getElementById('editActivityForm');
+
+        function openEditModal(btn) {
+            const id = btn.getAttribute('data-id');
+            const title = btn.getAttribute('data-title');
+            const date = btn.getAttribute('data-date');
+            const text = btn.getAttribute('data-text');
+
+            document.getElementById('edit_id').value = id;
+            document.getElementById('edit_title').value = title;
+            document.getElementById('edit_date').value = date;
+            document.getElementById('edit_text').value = text;
+
+            editModal.style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            editModal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function (event) {
+            if (event.target == editModal) {
+                closeEditModal();
+            }
+        }
+
+        editForm.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const id = document.getElementById('edit_id').value;
+            const formData = new FormData(this);
+            const btn = this.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+
+            btn.innerText = 'جاري الحفظ...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/admin/edit_activity/' + id, {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    alert('تم تعديل الخبر بنجاح');
+                    location.reload();
+                } else {
+                    alert('خطأ: ' + result.message);
+                }
+            } catch (err) {
+                alert('حدث خطأ غير متوقع');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+
+</html>

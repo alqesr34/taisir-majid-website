@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الموقع الرسمي | تيسير ماجد القيسي</title>
+  <meta name="description"
+    content="الموقع الرسمي لعضو مجلس محافظة بغداد تيسير ماجد القيسي. تواصل معنا وتابع آخر الأخبار والنشاطات.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
+</head>
+
+<body>
+
+  <!-- Loading Screen -->
+  <div id="loader">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="#" class="logo">
+        <i class="fas fa-landmark"></i> تيسير ماجد القيسي
+      </a>
+      <button class="menu-toggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul class="nav-links">
+        <li><a href="#home" class="active">الرئيسية</a></li>
+        <li><a href="#about">من نحن</a></li>
+        <li><a href="#vision">الرؤية والأهداف</a></li>
+        <li><a href="#news">الأخبار</a></li>
+        <li><a href="#contact" class="btn-primary">تواصل معنا</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header id="home" class="hero">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+      <h2 class="animate-up">عضو مجلس محافظة بغداد</h2>
+      <h1 class="animate-up delay-1">تيسير ماجد القيسي</h1>
+      <p class="animate-up delay-2">نعمل معاً من أجل بغداد أجمل ومستقبل أفضل لمدينتنا العريقة.</p>
+      <div class="hero-buttons animate-up delay-3">
+        <a href="#contact" class="btn btn-primary">قدم شكوى / مقترح</a>
+        <a href="#about" class="btn btn-outline">تعرف علينا</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- About Section -->
+  <section id="about" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h3>من هو</h3>
+        <h2>تيسير ماجد القيسي</h2>
+        <div class="line"></div>
+      </div>
+      <div class="about-grid">
+        <div class="about-image reveal-right">
+          <img src="{{ url_for('static', filename='img/profile.jpg') }}" alt="تيسير ماجد القيسي" class="profile-img">
+        </div>
+        <div class="about-text reveal-left">
+          <p>عضو في مجلس محافظة بغداد، يسعى لخدمة أهالي العاصمة من خلال طرح المشاريع الخدمية ومراقبة الأداء الحكومي.</p>
+          <p>يؤمن بالعمل الميداني والتواصل المباشر مع المواطنين للوقوف على احتياجاتهم ومشاكلهم والسعي الجاد لحلها ضمن
+            الأطر القانونية والإدارية المتاحة.</p>
+          <ul class="features-list">
+            <li><i class="fas fa-check-circle"></i> الشفافية في العمل</li>
+            <li><i class="fas fa-check-circle"></i> النزاهة والإخلاص</li>
+            <li><i class="fas fa-check-circle"></i> خدمة المواطن أولاً</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vision/Stats Section -->
+  <section id="vision" class="section bg-light">
+    <div class="container">
+      <div class="section-header">
+        <h3>رؤيتنا</h3>
+        <h2>أهدافنا للمرحلة القادمة</h2>
+        <div class="line"></div>
+      </div>
+      <div class="cards-grid">
+        <div class="card reveal-up">
+          <div class="card-icon"><i class="fas fa-road"></i></div>
+          <h4>البنية التحتية</h4>
+          <p>تطوير الطرق والجسور وشبكات الصرف الصحي لخدمة أحياء بغداد كافة.</p>
+        </div>
+        <div class="card reveal-up delay-1">
+          <div class="card-icon"><i class="fas fa-book-reader"></i></div>
+          <h4>التعليم</h4>
+          <p>دعم المؤسسات التربوية وتوفير بيئة تعليمية مناسبة لأبنائنا الطلبة.</p>
+        </div>
+        <div class="card reveal-up delay-2">
+          <div class="card-icon"><i class="fas fa-heartbeat"></i></div>
+          <h4>الصحة</h4>
+          <p>متابعة الواقع الصحي والعمل على تحسين الخدمات الطبية في المستشفيات والمراكز.</p>
+        </div>
+        <div class="card reveal-up delay-3">
+          <div class="card-icon"><i class="fas fa-hands-helping"></i></div>
+          <h4>الخدمات الاجتماعية</h4>
+          <p>دعم الشرائح المتعففة وذوي الاحتياجات الخاصة وضمان حقوقهم.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- News/Gallery Section -->
+  <section id="news" class="section">
+    <div class="container">
+      <div class="section-header">
+        <h3>المركز الإعلامي</h3>
+        <h2>آخر النشاطات والأخبار</h2>
+        <div class="line"></div>
+      </div>
+      <div class="news-grid">
+        {% if activities %}
+        {% for activity in activities %}
+        <article class="news-item reveal-up" data-title="{{ activity.title }}" data-date="{{ activity.date }}"
+          data-text="{{ activity.text }}"
+          data-image="{{ url_for('static', filename=activity.image) if activity.image else '' }}"
+          onclick="openNewsModal(this)">
+          <div class="news-img">
+            {% if activity.image %}
+            <img src="{{ url_for('static', filename=activity.image) }}" alt="{{ activity.title }}"
+              style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+            <i class="far fa-newspaper"></i>
+            {% if activity.pinned %}
+            <div class="pinned-badge">
+              <i class="fas fa-thumbtack"></i>
+            </div>
+            {% endif %}
+            {% endif %}
+          </div>
+          <div class="news-overlay">
+            <i class="fas fa-search-plus"></i>
+          </div>
+          <div class="news-content-mini">
+            <span class="date">{{ activity.date }}</span>
+            <h4>{{ activity.title }}</h4>
+          </div>
+        </article>
+        {% endfor %}
+        {% else %}
+        <!-- Default message if no news -->
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">
+          <i class="fas fa-bullhorn" style="font-size: 3rem; margin-bottom: 15px; opacity: 0.5;"></i>
+          <p>لا توجد نشاطات مضافة حديثاً.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- News Modal -->
+  <div id="newsModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <div class="modal-body">
+        <div class="modal-img-container">
+          <img id="modalImg" src="" alt="">
+        </div>
+        <div class="modal-text-content">
+          <span id="modalDate" class="date"></span>
+          <h2 id="modalTitle"></h2>
+          <p id="modalText"></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <section id="contact" class="section bg-dark">
+    <div class="container">
+      <div class="contact-wrapper reveal-up">
+        <div class="contact-info">
+          <h3>معلومات التواصل</h3>
+          <p>نحن هنا للاستماع إليكم. يمكنكم زيارة المكتب أو إرسال رسالة مباشرة.</p>
+
+          <div class="info-item">
+            <i class="fas fa-envelope"></i>
+            <span>taisirmajidnajm@gmail.com</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>بغداد، العراق - مكتب مجلس المحافظة</span>
+          </div>
+          <div class="info-item">
+            <i class="fas fa-phone"></i>
+            <span>07838961231</span>
+          </div>
+
+
+          <div class="social-links">
+            <a href="https://www.facebook.com/taisirmajid" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://twitter.com/taisir_majid" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://t.me/taisir_majid" target="_blank"><i class="fab fa-telegram"></i></a>
+            <a href="https://www.tiktok.com/@taisir_majid" target="_blank"><i class="fab fa-tiktok"></i></a>
+          </div>
+        </div>
+
+        <div class="contact-form">
+          <h3>أرسل شكوى أو مقترح</h3>
+          <form id="contactForm">
+            <div class="form-group">
+              <label for="name">الاسم الكامل</label>
+              <input type="text" id="name" name="name" required placeholder="أدخل اسمك هنا" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="phone">رقم الهاتف</label>
+              <input type="tel" id="phone" name="phone" required placeholder="07xxxxxxxxx" autocomplete="off">
+            </div>
+            <div class="form-group">
+              <label for="type">نوع الرسالة</label>
+              <select id="type" name="type" autocomplete="off">
+                <option value="complaint">شكوى</option>
+                <option value="suggestion">مقترح</option>
+                <option value="inquiry">استفسار عام</option>
+                <option value="request">طلب مقابلة</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="message">الرسالة</label>
+              <textarea id="message" name="message" rows="5" required
+                placeholder="اكتب تفاصيل رسالتك هنا..." autocomplete="off"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">
+              <span>إرسال الرسالة</span>
+              <i class="fas fa-paper-plane"></i>
+            </button>
+            <div id="formMessage" class="form-message"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-logo">
+          <h2>تيسير القيسي</h2>
+          <p>عضو مجلس محافظة بغداد</p>
+        </div>
+        <div class="footer-bottom">
+          <p>جميع الحقوق محفوظة &copy; 2026</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+
+</html>
