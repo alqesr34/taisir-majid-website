@@ -4,8 +4,10 @@ import uuid
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from werkzeug.utils import secure_filename
 
+# Flask app setup
 app = Flask(__name__, static_folder='static', template_folder='templates')
 app.secret_key = os.environ.get('SECRET_KEY', 'dev_key_change_in_production')
+app.config['JSON_AS_ASCII'] = False
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MESSAGES_FILE = os.path.join(BASE_DIR, 'messages.json')
@@ -14,11 +16,14 @@ UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static/img/news')
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-ADMIN_USER = 'muk'
-ADMIN_PASS = '12395'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Ensure upload directory exists
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+ADMIN_USER = os.environ.get('ADMIN_USER', 'muk')
+ADMIN_PASS = os.environ.get('ADMIN_PASS', '12395')
+
+# Ensure necessary directories exist
+for directory in [app.config['UPLOAD_FOLDER'], os.path.dirname(MESSAGES_FILE), os.path.dirname(ACTIVITIES_FILE)]:
+    os.makedirs(directory, exist_ok=True)
 
 
 def allowed_file(filename):
@@ -26,10 +31,16 @@ def allowed_file(filename):
 
 
 def save_data(file_path, data):
-    existing_data = load_data(file_path)
-    existing_data.append(data)
-    with open(file_path, 'w', encoding='utf-8') as f:
-        json.dump(existing_data, f, ensure_ascii=False, indent=2)
+    try:
+        existing_data = load_data(file_path)
+        existing_data.append(data)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(existing_data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Error saving data to {file_path}: {e}")
+        return False
+    return True
 
 
 def load_data(file_path):
@@ -37,14 +48,21 @@ def load_data(file_path):
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 return json.load(f)
-        except Exception:
+        except Exception as e:
+            print(f"Error loading data from {file_path}: {e}")
             return []
     return []
 
 
 def save_all_data(file_path, data):
-    with open(file_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    try:
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"Error saving all data to {file_path}: {e}")
+        return False
+    return True
 
 
 @app.route('/')
@@ -187,6 +205,17 @@ def logout():
     return redirect(url_for('login'))
 
 
+@app.errorhandler(404)
+def not_found_error(error):
+    return jsonify({'status': 'error', 'message': 'الصفحة غير موجودة'}), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    print(f"Internal Server Error: {error}")
+    return jsonify({'status': 'error', 'message': 'خطأ في الخادم'}), 500
+
+
 if __name__ == '__main__':
     # Get environment settings
     is_production = os.environ.get('ENVIRONMENT') == 'production'
@@ -194,16 +223,16 @@ if __name__ == '__main__':
     
     # Show startup info
     print("\n" + "="*60)
-    print("✅ التطبيق يعمل الآن!")
+    print("Application Starting...")
+    print("Environment:", "PRODUCTION" if is_production else "DEVELOPMENT")
+    print("Port:", port)
     if not is_production:
-        print("\n📍 الروابط المتاحة:")
-        print("   🏠 الصفحة الرئيسية (محلي): http://localhost:%d" % port)
-        print("   🏠 الصفحة الرئيسية (الشبكة): http://192.168.1.108:%d" % port)
-        print("\n   🔐 لوحة التحكم (محلي): http://localhost:%d/login" % port)
-        print("   🔐 لوحة التحكم (الشبكة): http://192.168.1.108:%d/login" % port)
-        print("\n👤 بيانات الدخول:")
-        print("   اسم المستخدم: muk")
-        print("   كلمة المرور: 12395")
+        print("\nLocal URLs:")
+        print("   Homepage: http://localhost:%d" % port)
+        print("   Admin: http://localhost:%d/login" % port)
+        print("\nCredentials:")
+        print("   Username: muk")
+        print("   Password: 12395")
     print("="*60 + "\n")
     
     app.run(host='0.0.0.0', port=port, debug=not is_production)
