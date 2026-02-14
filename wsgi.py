@@ -1,7 +1,6 @@
-import os
-import sys
+"""WSGI entry point for production deployment (gunicorn)"""
 
-# Import Flask app for gunicorn WSGI server
 from web import app
 
-# App is now available for gunicorn to serve
+if __name__ == '__main__':
+    app.run()
