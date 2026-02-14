@@ -41,7 +41,3 @@ Thumbs.db
 # Environment
 .env
 .env.local
-
-# Database/Data files (optional - remove if you want to track)
-messages.json
-activities.json

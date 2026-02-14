@@ -1,8 +1,7 @@
 import os
 import sys
+
+# Import Flask app for gunicorn WSGI server
 from web import app
 
-# Ensure the app configuration
-if __name__ != '__main__':
-    # This will be called by gunicorn
-    pass
+# App is now available for gunicorn to serve
