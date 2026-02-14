@@ -23,7 +23,10 @@ ADMIN_PASS = os.environ.get('ADMIN_PASS', '12395')
 
 # Ensure necessary directories exist
 for directory in [app.config['UPLOAD_FOLDER'], os.path.dirname(MESSAGES_FILE), os.path.dirname(ACTIVITIES_FILE)]:
-    os.makedirs(directory, exist_ok=True)
+    try:
+        os.makedirs(directory, exist_ok=True)
+    except Exception as e:
+        print(f"Warning: Could not create directory {directory}: {e}", flush=True)
 
 
 def allowed_file(filename):
