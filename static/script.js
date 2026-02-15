@@ -112,17 +112,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const date = element.getAttribute('data-date');
         const text = element.getAttribute('data-text').replace(/\n/g, '<br>');
         const imageSrc = element.getAttribute('data-image');
+        const videoSrc = element.getAttribute('data-video');
 
         document.getElementById("modalTitle").innerText = title;
         document.getElementById("modalDate").innerText = date;
         document.getElementById("modalText").innerHTML = text;
 
         const modalImg = document.getElementById("modalImg");
-        if (imageSrc) {
+        const modalVideo = document.getElementById("modalVideo");
+        const modalVideoSource = document.getElementById("modalVideoSource");
+        
+        // Show video if available, otherwise show image
+        if (videoSrc) {
+            modalVideoSource.src = videoSrc;
+            modalVideo.load();
+            modalVideo.style.display = "block";
+            modalImg.style.display = "none";
+        } else if (imageSrc) {
             modalImg.src = imageSrc;
-            modalImg.parentElement.style.display = "block";
+            modalImg.style.display = "block";
+            modalVideo.style.display = "none";
         } else {
-            modalImg.parentElement.style.display = "none";
+            modalImg.style.display = "none";
+            modalVideo.style.display = "none";
         }
 
         modal.style.display = "flex";

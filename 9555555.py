@@ -181,7 +181,6 @@ def add_activity():
     save_data(ACTIVITIES_FILE, activity)
     return jsonify({'status': 'success', 'message': 'تم إضافة النشاط بنجاح'})
 
-
 @app.route('/admin/edit_activity/<activity_id>', methods=['POST'])
 def edit_activity(activity_id):
     if not session.get('logged_in'):
