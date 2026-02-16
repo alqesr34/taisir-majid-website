@@ -3,18 +3,7 @@
     "name": "محمد عبد الكريم",
     "phone": "07725033335",
     "type": "request",
-    "message": "ارجو التفضل قبول المقابل"
-  },
-  {
-    "name": "Test User",
-    "phone": "07800000000",
-    "type": "suggestion",
-    "message": "This is a test message from Antigravity."
-  },
-  {
-    "name": "Test",
-    "phone": "123",
-    "type": "test",
-    "message": "test"
+    "message": "ارجو التفضل قبول المقابل",
+    "id": "407f0e4d-2a95-4ad0-9d05-befe37e8aae4"
   }
 ]

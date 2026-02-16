@@ -8,16 +8,20 @@ cd /d i:\web
 
 echo.
 echo ============================================================
-echo          🚀 رفع المشروع إلى GitHub تلقائياً
+echo          🚀 فتح المجلد ورفع المشروع
 echo ============================================================
 echo.
 
-REM تشغيل PowerShell Script
-powershell -ExecutionPolicy Bypass -File "auto_push.ps1"
+REM 1. فتح المجلد في ويندوز تلقائياً
+echo [INFO] Opening folder...
+start .
+
+REM 2. تشغيل سكريبت الرفع (Python)
+python init_github.py
 
 if %ERRORLEVEL% neq 0 (
     echo.
-    echo ❌ حدث خطأ!
+    echo ❌ حدث خطأ في تشغيل Python!
     echo اضغط أي زر للخروج...
     pause
     exit /b 1

@@ -1,48 +1,71 @@
 @echo off
-REM Script to initialize and push project to GitHub
-REM Make sure Git is installed before running this
-
 setlocal enabledelayedexpansion
 
-echo.
-echo ========================================
-echo GitHub Repository Setup Script
-echo ========================================
+echo ========================================================
+echo       GitHub Setup & Upload Assistant
+echo ========================================================
 echo.
 
-REM Replace with your actual values
-set "REPO_NAME=taisir-majid-website"
-set "GITHUB_USERNAME=YOUR_USERNAME"
-set "COMMIT_MSG=Initial commit: Add website project"
+:: Check if git is installed
+where git >nul 2>nul
+if %errorlevel% neq 0 (
+    echo [ERROR] Git is not installed or not in PATH.
+    echo Please install Git from https://git-scm.com/download/win
+    pause
+    exit /b
+)
 
-echo Step 1: Initialize Git repository
-git init
+:: Initialize Git if not already
+if not exist .git (
+    echo [INFO] Initializing new Git repository...
+    git init
+    git branch -M main
+) else (
+    echo [INFO] Git repository already exists.
+)
 
-echo.
-echo Step 2: Add all files
+:: Add all files
+echo [INFO] Adding files...
 git add .
 
-echo.
-echo Step 3: Create initial commit
-git commit -m "%COMMIT_MSG%"
+:: Commit
+echo [INFO] Committing changes...
+git commit -m "Auto update for hosting"
 
-echo.
-echo Step 4: Set remote repository
-git remote add origin https://github.com/%GITHUB_USERNAME%/%REPO_NAME%.git
+:: Check for remote 'origin'
+git remote get-url origin >nul 2>nul
+if %errorlevel% neq 0 (
+    echo.
+    echo [ACTION REQUIRED]
+    echo Please create a new repository on GitHub: https://github.com/new
+    echo copy the HTTPS URL (e.g., https://github.com/username/repo.git)
+    echo.
+    set /p REPO_URL="Paste Repository URL here: "
+    git remote add origin !REPO_URL!
+) else (
+    echo [INFO] Remote 'origin' already exists.
+)
 
-echo.
-echo Step 5: Rename branch to main
-git branch -M main
-
-echo.
-echo Step 6: Push to GitHub
+:: Push
+echo [INFO] Pushing to GitHub...
 git push -u origin main
 
-echo.
-echo ========================================
-echo Done! Your project is now on GitHub
-echo Repository URL: https://github.com/%GITHUB_USERNAME%/%REPO_NAME%
-echo ========================================
-echo.
+if %errorlevel% neq 0 (
+    echo.
+    echo [ERROR] Push failed.
+    echo Possible reasons:
+    echo 1. You need to sign in (a browser window might have opened).
+    echo 2. The repository URL is incorrect.
+    echo 3. There are conflicts (force push might be needed).
+    echo.
+    set /p FORCE="Do you want to FORCE push (overwrite remote)? (y/n): "
+    if /i "!FORCE!"=="y" (
+        git push -f origin main
+    )
+)
 
+echo.
+echo ========================================================
+echo       Done! Your code is on GitHub.
+echo ========================================================
 pause

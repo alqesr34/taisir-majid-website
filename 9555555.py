@@ -98,6 +98,7 @@ def index():
 @app.route('/contact', methods=['POST'])
 def contact():
     data = request.form.to_dict()
+    data['id'] = str(uuid.uuid4())
     save_data(MESSAGES_FILE, data)
     return jsonify({'status': 'success', 'message': 'تم استلام رسالتك، شكراً'})
 
@@ -119,8 +120,19 @@ def login():
 def admin():
     if not session.get('logged_in'):
         return redirect(url_for('login'))
-    messages = load_data(MESSAGES_FILE)
+    
     activities = load_data(ACTIVITIES_FILE)
+    messages = load_data(MESSAGES_FILE)
+
+    # Backfill IDs for messages that don't have them
+    messages_updated = False
+    for msg in messages:
+        if 'id' not in msg:
+            msg['id'] = str(uuid.uuid4())
+            messages_updated = True
+    
+    if messages_updated:
+        save_all_data(MESSAGES_FILE, messages)
     # Sort activities: Pinned first with media, then by date (newest first)
     # Separate activities: pinned with media, pinned without media, unpinned with media, unpinned without media
     has_media = lambda a: a.get('video') or a.get('image')
@@ -246,6 +258,18 @@ def delete_activity(activity_id):
     
     save_all_data(ACTIVITIES_FILE, updated_activities)
     return jsonify({'status': 'success', 'message': 'تم حذف النشاط'})
+
+
+@app.route('/admin/delete_message/<message_id>', methods=['POST'])
+def delete_message(message_id):
+    if not session.get('logged_in'):
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+
+    messages = load_data(MESSAGES_FILE)
+    updated_messages = [m for m in messages if m.get('id') != message_id]
+    
+    save_all_data(MESSAGES_FILE, updated_messages)
+    return jsonify({'status': 'success', 'message': 'تم حذف الرسالة'})
 
 
 @app.route('/logout')
